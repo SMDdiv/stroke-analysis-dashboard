@@ -223,43 +223,46 @@ elif page == "Dashboard":
 
         with st.container():
             st.subheader("Stroke Rate by Glucose Level")
+            sorted_glucose = glucose_stroke.sort_values('stroke_percent', ascending=False)
             fig_glucose = px.bar(
-                glucose_stroke.sort_values('stroke', ascending=False),
-                x='glucose_category',
-                y='stroke_percent',
+                sorted_glucose,
+                y='glucose_category',
+                x='stroke_percent',
+                orientation='h',
                 color='glucose_category',
                 labels={'stroke_percent': 'Stroke Rate (%)', 'glucose_category': 'Glucose Level'},
-                text=glucose_stroke.sort_values('stroke', ascending=False)['stroke_percent'].round(1),
+                text=sorted_glucose['stroke_percent'].round(1),
                 color_discrete_sequence=color_palette
             )
             fig_glucose.update_layout(template='plotly_dark', showlegend=False)
             fig_glucose.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
             st.plotly_chart(fig_glucose, use_container_width=True)
 
+
         with st.container():
             st.subheader("Stroke Rate by Gender")
-            fig_gender = px.bar(
-                gender_stroke.sort_values('stroke', ascending=False),
-                x='gender',
-                y='stroke_percent',
+            fig_gender = px.pie(
+                gender_stroke,
+                names='gender',
+                values='stroke_percent',
+                title='Stroke Rate by Gender',
                 color='gender',
-                labels={'stroke_percent': 'Stroke Rate (%)', 'gender': 'Gender'},
-                text=gender_stroke.sort_values('stroke', ascending=False)['stroke_percent'].round(1),
-                color_discrete_sequence=color_palette
+                color_discrete_sequence=color_palette,
+                hole=0.3
             )
-            fig_gender.update_layout(template='plotly_dark', showlegend=False)
-            fig_gender.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
+            fig_gender.update_layout(template='plotly_dark', showlegend=True)
             st.plotly_chart(fig_gender, use_container_width=True)
 
         with st.container():
             st.subheader("Stroke Rate by BMI Category")
+            sorted_bmi = bmi_stroke.sort_values('stroke_percent', ascending=False)
             fig_bmi = px.bar(
-                bmi_stroke.sort_values('stroke', ascending=False),
+                sorted_bmi,
                 x='bmi_category',
                 y='stroke_percent',
                 color='bmi_category',
                 labels={'stroke_percent': 'Stroke Rate (%)', 'bmi_category': 'BMI Category'},
-                text=bmi_stroke.sort_values('stroke', ascending=False)['stroke_percent'].round(1),
+                text=sorted_bmi['stroke_percent'].round(1),
                 color_discrete_sequence=color_palette
             )
             fig_bmi.update_layout(template='plotly_dark', showlegend=False)
