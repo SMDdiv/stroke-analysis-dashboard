@@ -121,42 +121,37 @@ elif page == "Dashboard":
 
         st.sidebar.subheader("Filter Data")
 
-        # Reset logic: use session state to manage reset
-        if 'reset' not in st.session_state:
-            st.session_state['reset'] = False
-
+        # ✅ Reset logic: fully clear session state keys
         if st.sidebar.button("Reset Filters"):
-            st.session_state['reset'] = True
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
             st.rerun()
 
         genders = df['gender'].unique().tolist()
-        gender_filter = st.sidebar.multiselect("Select Gender", options=genders, default=genders if st.session_state['reset'] else st.session_state.get('gender_filter', genders))
+        gender_filter = st.sidebar.multiselect("Select Gender", options=genders, default=st.session_state.get('gender_filter', genders))
         st.session_state['gender_filter'] = gender_filter
 
         age_min, age_max = int(df['age'].min()), int(df['age'].max())
         age_filter = st.sidebar.slider("Select Age Range", min_value=age_min, max_value=age_max,
-                                       value=(age_min, age_max) if st.session_state['reset'] else st.session_state.get('age_filter', (age_min, age_max)))
+                                       value=st.session_state.get('age_filter', (age_min, age_max)))
         st.session_state['age_filter'] = age_filter
 
         marital_options = df['ever_married'].unique().tolist()
         marital_filter = st.sidebar.multiselect("Select Marital Status", options=marital_options,
-                                               default=marital_options if st.session_state['reset'] else st.session_state.get('marital_filter', marital_options))
+                                               default=st.session_state.get('marital_filter', marital_options))
         st.session_state['marital_filter'] = marital_filter
 
         work_options = df['work_type'].unique().tolist()
         work_filter = st.sidebar.multiselect("Select Work Type", options=work_options,
-                                            default=work_options if st.session_state['reset'] else st.session_state.get('work_filter', work_options))
+                                            default=st.session_state.get('work_filter', work_options))
         st.session_state['work_filter'] = work_filter
 
         residence_options = ['Both'] + df['Residence_type'].unique().tolist()
         residence_filter = st.sidebar.radio("Residence Type", options=residence_options,
-                                           index=0 if st.session_state['reset'] else residence_options.index(st.session_state.get('residence_filter', 'Both')))
+                                           index=residence_options.index(st.session_state.get('residence_filter', 'Both')))
         st.session_state['residence_filter'] = residence_filter
 
-        # Clear reset state after applying
-        st.session_state['reset'] = False
-
-        # Apply filtering
+        # Filtering logic
         filtered_df = df.copy()
         if residence_filter != 'Both':
             filtered_df = filtered_df[filtered_df['Residence_type'] == residence_filter]
@@ -168,7 +163,6 @@ elif page == "Dashboard":
             (filtered_df['work_type'].isin(work_filter))
         ]
 
-        # Metrics
         total_records = len(filtered_df)
         total_strokes = int(filtered_df['stroke'].sum())
         stroke_rate_overall = (total_strokes / total_records) * 100 if total_records > 0 else 0
@@ -205,7 +199,7 @@ elif page == "Dashboard":
         st.markdown("---")
 
         color_palette = px.colors.sequential.Teal
-        
+
         with st.container():
             st.subheader("Stroke Rate by Age Group")
             fig_age = px.bar(
@@ -238,7 +232,6 @@ elif page == "Dashboard":
             fig_glucose.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
             st.plotly_chart(fig_glucose, use_container_width=True)
 
-
         with st.container():
             st.subheader("Stroke Rate by Gender")
             fig_gender = px.pie(
@@ -269,7 +262,6 @@ elif page == "Dashboard":
             fig_bmi.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
             st.plotly_chart(fig_bmi, use_container_width=True)
 
-        # Heatmap: Stroke by BMI + Glucose
         st.subheader("Stroke Rate by BMI and Glucose Level")
         heatmap_data = filtered_df.groupby(['bmi_category', 'glucose_category'], observed=False)['stroke'].mean().reset_index()
         heatmap_data['stroke_percent'] = heatmap_data['stroke'] * 100
@@ -278,10 +270,8 @@ elif page == "Dashboard":
         fig_heatmap.update_layout(template='plotly_dark', title='Stroke Rate (%) by BMI and Glucose Category')
         st.plotly_chart(fig_heatmap, use_container_width=True)
 
-        # Combo Risk Chart
         st.subheader("Stroke Rate by Hypertension and Heart Disease Combination")
-        combo_stroke = filtered_df.groupby('combo', observed=False)['stroke'].mean().reset_index()
-        combo_stroke['stroke_percent'] = combo_stroke['stroke'] * 100
+        combo_stroke = combo_stroke.sort_values('stroke_percent', ascending=False)
         fig_combo = px.bar(
             combo_stroke,
             x='combo',
