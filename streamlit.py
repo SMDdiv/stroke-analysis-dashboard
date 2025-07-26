@@ -220,25 +220,8 @@ elif page == "Dashboard":
             top_age = sorted_age.iloc[0]['age_bucket']
             st.caption(f"The age group {top_age} has the highest stroke rate")
 
-        # Chart 2: Stroke Distribution by Gender
-        # Shows male vs female stroke rate using a donut-style pie chart
-        with st.container():
-            st.subheader("Stroke Rate by Glucose Level")
-            sorted_glucose = glucose_stroke.sort_values('stroke_percent', ascending=False)
-            fig_glucose = px.bar(
-                sorted_glucose,
-                y='glucose_category',
-                x='stroke_percent',
-                orientation='h',
-                color='glucose_category',
-                labels={'stroke_percent': 'Stroke Rate (%)', 'glucose_category': 'Glucose Level'},
-                text=sorted_glucose['stroke_percent'].round(1),
-                color_discrete_sequence=color_palette
-            )
-            fig_glucose.update_layout(template='plotly_dark', showlegend=False)
-            fig_glucose.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
-            st.plotly_chart(fig_glucose, use_container_width=True)
-
+        # Chart 2: Stroke Rate by Gender
+        # Compares stroke rate across genders using a donut-style pie chart
         with st.container():
             st.subheader("Stroke Rate by Gender")
             fig_gender = px.pie(
@@ -383,15 +366,43 @@ elif page == "Dashboard":
             fig_bmi.update_layout(template='plotly_dark', showlegend=False)
             fig_bmi.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
             st.plotly_chart(fig_bmi, use_container_width=True)
+            # Highlight which BMI group has the highest stroke rate
+            top_bmi = sorted_bmi.iloc[0]['bmi_category']
+            st.caption(f"Highest stroke rate appears among {top_bmi} BMI group")
 
-        st.subheader("Stroke Rate by BMI and Glucose Level")
-        heatmap_data = filtered_df.groupby(['bmi_category', 'glucose_category'], observed=False)['stroke'].mean().reset_index()
-        heatmap_data['stroke_percent'] = heatmap_data['stroke'] * 100
-        heatmap_pivot = heatmap_data.pivot(index='glucose_category', columns='bmi_category', values='stroke_percent')
-        fig_heatmap = px.imshow(heatmap_pivot, text_auto=True, color_continuous_scale='Teal')
-        fig_heatmap.update_layout(template='plotly_dark', title='Stroke Rate (%) by BMI and Glucose Category')
-        st.plotly_chart(fig_heatmap, use_container_width=True)
-
+        # Chart 8: Stroke Rate by Life Stage and Gender
+        # Compares different age groups and genders to see which combination has the highest risk
+        with st.container():
+            st.subheader("Stroke Rate by Life Stage and Gender")
+            life_stage = filtered_df.groupby(['age_bucket', 'gender'], observed=False)['stroke'].mean().reset_index()
+            life_stage['stroke_percent'] = life_stage['stroke'] * 100
+            # Order age_bucket by highest stroke rate across genders (descending)
+            order_life = (
+                life_stage.groupby('age_bucket')['stroke_percent']
+                .max()
+                .sort_values(ascending=False)
+                .index.tolist()
+            )
+            fig_life = px.bar(
+                life_stage,
+                x='age_bucket',
+                y='stroke_percent',
+                color='gender',
+                barmode='group',
+                labels={'stroke_percent': 'Stroke Rate (%)', 'age_bucket': 'Age Group', 'gender': 'Gender'},
+                text=life_stage['stroke_percent'].round(1),
+                category_orders={'age_bucket': order_life},
+                color_discrete_sequence=color_palette
+            )
+            fig_life.update_layout(template='plotly_dark', showlegend=True)
+            fig_life.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
+            st.plotly_chart(fig_life, use_container_width=True)
+            # Determine highest risk combination
+            max_idx = life_stage['stroke_percent'].idxmax()
+            top_age_group = life_stage.loc[max_idx, 'age_bucket']
+            top_gender_group = life_stage.loc[max_idx, 'gender']
+            st.caption(f"The highest rate is seen in {top_gender_group} in the {top_age_group} age group")
+        # Chart 9: Stroke Rate by Hypertension and Heart Disease Combination
         st.subheader("Stroke Rate by Hypertension and Heart Disease Combination")
         combo_stroke = combo_stroke.sort_values('stroke_percent', ascending=False)
         fig_combo = px.bar(
@@ -406,3 +417,63 @@ elif page == "Dashboard":
         fig_combo.update_layout(template='plotly_dark', showlegend=False)
         fig_combo.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
         st.plotly_chart(fig_combo, use_container_width=True)
+        # Provide a simple insight for the combo chart
+        top_combo = combo_stroke.iloc[0]['combo']
+        st.caption(f"The highest stroke rate occurs in the {top_combo} group")
+
+        # Chart 10: Stroke Rate by BMI and Glucose Level (Heatmap)
+        # Multivariable chart showing interaction between obesity and blood sugar
+        st.subheader("Stroke Rate by BMI and Glucose Level")
+        heatmap_data = filtered_df.groupby(['bmi_category', 'glucose_category'], observed=False)['stroke'].mean().reset_index()
+        heatmap_data['stroke_percent'] = heatmap_data['stroke'] * 100
+        heatmap_pivot = heatmap_data.pivot(index='glucose_category', columns='bmi_category', values='stroke_percent')
+        fig_heatmap = px.imshow(heatmap_pivot, text_auto=True, color_continuous_scale='Teal')
+        fig_heatmap.update_layout(template='plotly_dark', title='Stroke Rate (%) by BMI and Glucose Category')
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+        # Provide an insight for the heatmap
+        # Find the combination with the highest stroke percentage
+        if not heatmap_data.empty:
+            max_idx = heatmap_data['stroke_percent'].idxmax()
+            max_row = heatmap_data.loc[max_idx]
+            top_bmi_cat = max_row['bmi_category']
+            top_glucose_cat = max_row['glucose_category']
+            st.caption(f"The highest risk combination is {top_bmi_cat} BMI with {top_glucose_cat} glucose levels")
+
+        
+        # Chart 11: Stroke Rate by Medical Risk Factor
+        # Compares major health risk factors to see which drives stroke risk most
+        with st.container():
+            st.subheader("Stroke Rate by Medical Risk Factor")
+            risk_rates = {
+                'Age > 60': filtered_df[filtered_df['age'] > 60]['stroke'].mean(),
+                'Hypertension': filtered_df[filtered_df['hypertension'] == 1]['stroke'].mean(),
+                'Heart Disease': filtered_df[filtered_df['heart_disease'] == 1]['stroke'].mean(),
+                'Glucose > 140': filtered_df[filtered_df['avg_glucose_level'] > 140]['stroke'].mean(),
+                'BMI > 30': filtered_df[filtered_df['bmi'] > 30]['stroke'].mean()
+            }
+            # Convert rates to percentages and round
+            for key in risk_rates:
+                risk_rates[key] = round(risk_rates[key] * 100, 2)
+            risk_df = pd.DataFrame(list(risk_rates.items()), columns=['Risk Factor', 'Stroke Rate (%)'])
+            risk_df = risk_df.sort_values(by='Stroke Rate (%)', ascending=False)
+            # Use the existing color palette for discrete colours
+            bar_colors = color_palette[:len(risk_df)]
+            color_mapping = {factor: bar_colors[i % len(bar_colors)] for i, factor in enumerate(risk_df['Risk Factor'])}
+            fig_risk = px.bar(
+                risk_df,
+                x='Risk Factor',
+                y='Stroke Rate (%)',
+                text='Stroke Rate (%)',
+                labels={'Stroke Rate (%)': 'Stroke Rate (%)', 'Risk Factor': 'Medical Risk Factor'},
+                color='Risk Factor',
+                color_discrete_map=color_mapping
+            )
+            fig_risk.update_traces(textposition='outside')
+            fig_risk.update_layout(
+                template='plotly_dark',
+                showlegend=False,
+                yaxis=dict(range=[0, risk_df['Stroke Rate (%)'].max() + 5])
+            )
+            st.plotly_chart(fig_risk, use_container_width=True)
+            top_factor = risk_df.iloc[0]['Risk Factor']
+            st.caption(f"{top_factor} has the highest stroke rate among these medical risk factors")
