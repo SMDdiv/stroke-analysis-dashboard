@@ -205,7 +205,7 @@ elif page == "Dashboard":
         st.markdown("---")
 
         color_palette = px.colors.sequential.Teal
-
+        
         with st.container():
             st.subheader("Stroke Rate by Age Group")
             fig_age = px.bar(
@@ -265,3 +265,29 @@ elif page == "Dashboard":
             fig_bmi.update_layout(template='plotly_dark', showlegend=False)
             fig_bmi.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
             st.plotly_chart(fig_bmi, use_container_width=True)
+
+        # Heatmap: Stroke by BMI + Glucose
+        st.subheader("Stroke Rate by BMI and Glucose Level")
+        heatmap_data = filtered_df.groupby(['bmi_category', 'glucose_category'], observed=False)['stroke'].mean().reset_index()
+        heatmap_data['stroke_percent'] = heatmap_data['stroke'] * 100
+        heatmap_pivot = heatmap_data.pivot(index='glucose_category', columns='bmi_category', values='stroke_percent')
+        fig_heatmap = px.imshow(heatmap_pivot, text_auto=True, color_continuous_scale='Teal')
+        fig_heatmap.update_layout(template='plotly_dark', title='Stroke Rate (%) by BMI and Glucose Category')
+        st.plotly_chart(fig_heatmap, use_container_width=True)
+
+        # Combo Risk Chart
+        st.subheader("Stroke Rate by Hypertension and Heart Disease Combination")
+        combo_stroke = filtered_df.groupby('combo', observed=False)['stroke'].mean().reset_index()
+        combo_stroke['stroke_percent'] = combo_stroke['stroke'] * 100
+        fig_combo = px.bar(
+            combo_stroke,
+            x='combo',
+            y='stroke_percent',
+            color='combo',
+            text='stroke_percent',
+            labels={'stroke_percent': 'Stroke Rate (%)', 'combo': 'Condition Combination'},
+            color_discrete_sequence=color_palette
+        )
+        fig_combo.update_layout(template='plotly_dark', showlegend=False)
+        fig_combo.update_traces(textposition='outside', texttemplate='%{text:.1f}%')
+        st.plotly_chart(fig_combo, use_container_width=True)
