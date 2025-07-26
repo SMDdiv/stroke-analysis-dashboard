@@ -1,0 +1,7 @@
+[theme]
+base = "dark"
+primaryColor = "#14B8A6"               # 🟢 Calm Teal
+backgroundColor = "#0F172A"            # Deep Navy
+secondaryBackgroundColor = "#1E293B"   # Slate Gray
+textColor = "#F1F5F9"                  # Soft White
+font = "sans serif"
