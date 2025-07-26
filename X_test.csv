@@ -1,0 +1,73 @@
+age,hypertension,heart_disease,avg_glucose_level,bmi,is_smoker,gender,ever_married,work_type,Residence_type,life_stage,bmi_category,glucose_level_category
+56.0,0,0,185.17,40.4,1,Female,Yes,Private,Urban,Early Adulthood,Obese,Diabetes
+48.0,0,0,134.59,28.2,1,Female,Yes,Private,Rural,Mid Youth,Overweight,Diabetes
+66.0,0,0,151.16,27.5,1,Male,Yes,Private,Urban,Late Adulthood,Overweight,Diabetes
+81.0,0,0,91.54,31.4,0,Male,Yes,Self-employed,Rural,Elderly,Obese,Normal
+15.0,0,0,90.1,32.1,0,Female,No,Self-employed,Urban,Early Adolescent,Obese,Normal
+82.0,0,0,200.59,29.0,1,Male,Yes,Govt_job,Urban,Elderly,Overweight,Diabetes
+71.0,0,0,86.96,32.6,0,Male,No,Private,Urban,Late Adulthood,Obese,Normal
+38.0,0,0,162.72,31.9,1,Male,No,Private,Rural,Mid Youth,Obese,Diabetes
+45.0,0,0,64.14,29.4,0,Male,Yes,Private,Rural,Mid Youth,Overweight,Hypoglycemia
+42.0,0,0,75.34,38.0,0,Female,Yes,Self-employed,Rural,Mid Youth,Obese,Normal
+73.0,0,0,88.52,20.8,1,Female,Yes,Self-employed,Urban,Late Adulthood,Normal,Normal
+60.0,0,1,91.92,35.9,1,Male,Yes,Private,Urban,Early Adulthood,Obese,Normal
+78.0,0,0,78.03,23.9,1,Male,Yes,Private,Rural,Late Adulthood,Normal,Normal
+73.0,0,1,219.73,28.6,0,Male,Yes,Govt_job,Rural,Late Adulthood,Overweight,Diabetes
+58.0,0,0,100.42,39.5,1,Female,Yes,Private,Rural,Early Adulthood,Obese,Prediabetes
+79.0,1,0,64.44,26.9,1,Female,Yes,Private,Rural,Late Adulthood,Overweight,Hypoglycemia
+82.0,1,0,196.92,22.2,0,Female,Yes,Self-employed,Urban,Elderly,Normal,Diabetes
+78.0,0,0,133.19,23.6,1,Male,Yes,Self-employed,Urban,Late Adulthood,Normal,Diabetes
+44.0,0,0,73.87,28.8,1,Female,Yes,Private,Urban,Mid Youth,Overweight,Normal
+57.0,0,0,197.28,34.5,1,Male,Yes,Private,Rural,Early Adulthood,Obese,Diabetes
+53.0,1,0,240.86,31.9,0,Female,Yes,Private,Urban,Early Adulthood,Obese,Diabetes
+73.0,1,0,194.99,32.8,0,Male,Yes,Self-employed,Urban,Late Adulthood,Obese,Diabetes
+80.0,1,1,175.29,31.5,1,Male,Yes,Private,Urban,Late Adulthood,Obese,Diabetes
+66.0,0,0,141.24,28.5,0,Female,Yes,Private,Rural,Late Adulthood,Overweight,Diabetes
+81.0,1,0,74.02,25.0,0,Female,Yes,Self-employed,Rural,Elderly,Overweight,Normal
+63.0,0,1,196.71,36.5,1,Male,Yes,Private,Rural,Early Adulthood,Obese,Diabetes
+26.0,0,0,108.2,26.2,0,Female,No,Private,Rural,Early Youth,Overweight,Prediabetes
+77.0,0,0,90.0,32.0,0,Female,Yes,Self-employed,Rural,Late Adulthood,Obese,Normal
+39.0,0,0,110.91,27.6,0,Male,No,Private,Urban,Mid Youth,Overweight,Prediabetes
+45.0,0,0,77.45,42.2,1,Female,No,Govt_job,Rural,Mid Youth,Obese,Normal
+77.0,0,0,105.22,31.0,0,Female,Yes,Private,Urban,Late Adulthood,Obese,Prediabetes
+58.0,0,0,76.22,22.2,1,Male,No,Private,Rural,Early Adulthood,Normal,Normal
+80.0,1,0,66.03,35.4,0,Female,No,Private,Urban,Late Adulthood,Obese,Hypoglycemia
+66.0,0,0,92.04,23.1,0,Female,Yes,Govt_job,Urban,Late Adulthood,Normal,Normal
+24.0,0,0,69.72,29.6,0,Female,Yes,Self-employed,Rural,Early Youth,Overweight,Hypoglycemia
+54.0,0,0,206.52,35.4,1,Male,Yes,Private,Rural,Early Adulthood,Obese,Diabetes
+72.0,0,0,103.25,26.9,1,Female,Yes,Self-employed,Rural,Late Adulthood,Overweight,Prediabetes
+77.0,1,0,199.84,28.0,1,Female,Yes,Self-employed,Urban,Late Adulthood,Overweight,Diabetes
+33.0,0,0,114.16,43.3,0,Female,Yes,Private,Rural,Early Youth,Obese,Prediabetes
+60.0,0,0,87.86,29.0,1,Male,Yes,Private,Rural,Early Adulthood,Overweight,Normal
+67.0,0,1,228.69,36.6,1,Male,Yes,Private,Urban,Late Adulthood,Obese,Diabetes
+82.0,0,0,80.0,33.6,0,Female,Yes,Private,Urban,Elderly,Obese,Normal
+72.0,1,0,185.49,37.1,0,Male,Yes,Self-employed,Rural,Late Adulthood,Obese,Diabetes
+42.0,0,0,112.98,37.2,1,Female,Yes,Govt_job,Rural,Mid Youth,Obese,Prediabetes
+13.0,0,0,70.93,22.9,0,Female,No,Never_worked,Urban,Early Adolescent,Normal,Normal
+67.0,1,0,179.12,28.1,1,Female,Yes,Private,Rural,Late Adulthood,Overweight,Diabetes
+26.0,0,0,100.09,27.4,0,Male,Yes,Private,Rural,Early Youth,Overweight,Prediabetes
+68.0,0,0,93.61,24.9,0,Female,Yes,Self-employed,Rural,Late Adulthood,Normal,Normal
+50.0,0,0,103.51,35.9,0,Male,Yes,Private,Urban,Mid Youth,Obese,Prediabetes
+63.0,0,0,205.35,42.2,1,Female,Yes,Govt_job,Rural,Early Adulthood,Obese,Diabetes
+78.0,0,0,67.29,24.6,0,Female,Yes,Private,Urban,Late Adulthood,Normal,Hypoglycemia
+80.0,1,0,240.09,27.0,0,Male,Yes,Private,Urban,Late Adulthood,Overweight,Diabetes
+49.0,0,0,60.91,29.9,0,Female,Yes,Private,Urban,Mid Youth,Overweight,Hypoglycemia
+71.0,0,0,198.21,27.3,1,Male,Yes,Private,Urban,Late Adulthood,Overweight,Diabetes
+63.0,0,0,208.65,30.7,0,Male,Yes,Private,Urban,Early Adulthood,Obese,Diabetes
+69.0,1,1,72.17,36.8,0,Female,No,Self-employed,Urban,Late Adulthood,Obese,Normal
+28.0,1,0,80.4,57.5,0,Female,No,Private,Rural,Early Youth,Obese,Normal
+72.0,0,0,83.89,33.1,1,Female,Yes,Private,Urban,Late Adulthood,Obese,Normal
+58.0,0,0,199.42,29.0,0,Male,Yes,Private,Urban,Early Adulthood,Overweight,Diabetes
+72.0,1,0,221.79,30.0,0,Female,Yes,Private,Urban,Late Adulthood,Obese,Diabetes
+66.0,0,1,94.62,29.7,1,Female,Yes,Private,Urban,Late Adulthood,Overweight,Normal
+75.0,1,0,88.83,41.7,0,Female,Yes,Govt_job,Urban,Late Adulthood,Obese,Normal
+54.0,0,0,71.22,28.5,0,Male,Yes,Private,Urban,Early Adulthood,Overweight,Normal
+68.0,0,0,76.09,26.0,1,Male,Yes,Self-employed,Rural,Late Adulthood,Overweight,Normal
+30.0,0,0,62.25,33.7,0,Female,Yes,Govt_job,Rural,Early Youth,Obese,Hypoglycemia
+43.0,0,0,96.3,28.1,1,Female,Yes,Private,Urban,Mid Youth,Overweight,Normal
+68.0,1,1,247.51,40.5,1,Female,Yes,Private,Urban,Late Adulthood,Obese,Diabetes
+80.0,0,0,104.12,23.5,0,Male,Yes,Self-employed,Rural,Late Adulthood,Normal,Prediabetes
+48.0,0,0,74.11,20.5,0,Female,Yes,Private,Urban,Mid Youth,Normal,Normal
+57.0,0,0,71.71,35.2,1,Male,Yes,Govt_job,Urban,Early Adulthood,Obese,Normal
+71.0,0,0,102.87,27.2,1,Male,Yes,Private,Urban,Late Adulthood,Overweight,Prediabetes
+79.0,0,0,228.7,26.6,0,Female,Yes,Self-employed,Urban,Late Adulthood,Overweight,Diabetes
