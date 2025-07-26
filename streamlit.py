@@ -307,7 +307,7 @@ elif page == "Dashboard":
             st.caption(f"Highest stroke rate appears among people who are {top_marital}")
             
         # Chart 6: Stroke Rate by Glucose Level Band
-        # Categorizes glucose into bands to see how sugar levels correlate with stroke risk	
+        # Categorizes glucose into bands to see how sugar levels correlate with stroke risks
         with st.container():
             st.subheader("Stroke Rate by Glucose Level Band")
 
@@ -451,7 +451,7 @@ elif page == "Dashboard":
                 'Glucose > 140': filtered_df[filtered_df['avg_glucose_level'] > 140]['stroke'].mean(),
                 'BMI > 30': filtered_df[filtered_df['bmi'] > 30]['stroke'].mean()
             }
-            # Convert rates to percentages and round
+            # Convert rates to percentages and round 
             for key in risk_rates:
                 risk_rates[key] = round(risk_rates[key] * 100, 2)
             risk_df = pd.DataFrame(list(risk_rates.items()), columns=['Risk Factor', 'Stroke Rate (%)'])
