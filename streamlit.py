@@ -1,8 +1,13 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.figure_factory as ff
+import plotly.graph_objs as go
 import numpy as np
+import joblib
+import os
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import confusion_matrix, roc_curve, auc
 
 # Sidebar Styling :
 st.markdown("""
@@ -61,7 +66,7 @@ st.sidebar.title(" Navigation")
 page = st.sidebar.radio("Go to", ["Description", "Model", "Dashboard"])
 
 @st.cache_data
-def load_data(path: str = "healthcare-dataset-stroke-data.csv") -> pd.DataFrame | None:
+def load_data(path: str = r"C:\Users\User\OneDrive\Desktop\EDA_project\healthcare-dataset-stroke-data.csv") -> pd.DataFrame | None:
     try:
         return pd.read_csv(path)
     except FileNotFoundError:
@@ -121,7 +126,7 @@ if page == "Description":
     The dataset contains demographic and health information of individuals and whether they experienced a stroke.
     """)
 
-    df = load_data("healthcare-dataset-stroke-data.csv")
+    df = load_data(r"C:\Users\User\OneDrive\Desktop\EDA_project\healthcare-dataset-stroke-data.csv")
     if df is not None:
         df = preprocess_data(df)
 
@@ -150,7 +155,196 @@ if page == "Description":
         st.plotly_chart(fig)
 
 elif page == "Model":
-    st.title("\U0001F9EA Stroke Prediction AI Model")
+
+    # Load the trained model
+    model = joblib.load('model.pkl')
+
+    st.title("🔍 Stroke Prediction System")
+
+    # Section: User Input
+    st.header("🧑‍⚕️ Enter Patient Data")
+
+    # Create two columns for input fields
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Age input (slider)
+        age = st.slider("Age (years)", 1, 100, 30)
+        # Weight input (number)
+        weight = st.number_input("Weight (kg)", min_value=30.0, max_value=200.0, value=70.0)
+        # Hypertension input (radio button)
+        hypertension = st.radio("Hypertension?", [0, 1], format_func=lambda x: "No" if x == 0 else "Yes")
+        # Heart disease input (radio button)
+        heart_disease = st.radio("Heart Disease?", [0, 1], format_func=lambda x: "No" if x == 0 else "Yes")
+        # Smoking status input (radio button)
+        is_smoker = st.radio("Smoker?", [0, 1], format_func=lambda x: "No" if x == 0 else "Yes")
+
+    with col2:
+        # Height input (number)
+        height = st.number_input("Height (cm)", min_value=100.0, max_value=220.0, value=170.0)
+        # Average glucose level input (number)
+        avg_glucose_level = st.number_input("Average Glucose Level", min_value=50.0, max_value=300.0, value=90.0)
+        # Gender input (dropdown)
+        gender = st.selectbox("Gender", ['Male', 'Female'])
+        # Marital status input (dropdown)
+        ever_married = st.selectbox("Ever Married?", ['Yes', 'No'])
+        # Residence type input (dropdown)
+        residence_type = st.selectbox("Residence Type", ['Urban', 'Rural'])
+
+    # Calculate BMI automatically
+    height_m = height / 100
+    bmi = round(weight / (height_m ** 2), 2)
+
+    # Function to classify life stage based on age
+    def classify_life_stage(age):
+        if age < 1:
+            return 'Infant'
+        elif age <= 3:
+            return 'Toddler'
+        elif age <= 12:
+            return 'Child'
+        elif age <= 15:
+            return 'Early Adolescent'
+        elif age <= 19:
+            return 'Late Adolescent'
+        elif age <= 35:
+            return 'Early Youth'
+        elif age <= 50:
+            return 'Mid Youth'
+        elif age <= 65:
+            return 'Early Adulthood'
+        elif age <= 80:
+            return 'Late Adulthood'
+        elif age <= 90:
+            return 'Elderly'
+        else:
+            return 'Centenarian'
+
+    # Get life stage for the input age
+    life_stage = classify_life_stage(age)
+
+    # Function to classify BMI
+    def classify_bmi(bmi):
+        if bmi < 18.5:
+            return 'Underweight'
+        elif bmi < 25:
+            return 'Normal'
+        elif bmi < 30:
+            return 'Overweight'
+        else:
+            return 'Obese'
+
+    # Get BMI category for the calculated BMI
+    bmi_category = classify_bmi(bmi)
+
+    # Function to classify glucose level
+    def classify_glucose(glucose):
+        if glucose < 70:
+            return 'Hypoglycemia'
+        elif glucose <= 99:
+            return 'Normal'
+        elif glucose <= 125:
+            return 'Prediabetes'
+        else:
+            return 'Diabetes'
+
+    # Get glucose category for the input glucose level
+    glucose_category = classify_glucose(avg_glucose_level)
+
+    # When the user clicks the prediction button
+    if st.button("🔮 Predict Stroke"):
+        # Prepare user input as a DataFrame for the model
+        user_input = pd.DataFrame([{
+            'age': age,
+            'avg_glucose_level': avg_glucose_level,
+            'bmi': bmi,
+            'hypertension': hypertension,
+            'heart_disease': heart_disease,
+            'is_smoker': is_smoker,
+            'gender': gender,
+            'ever_married': ever_married,
+            'work_type': 'Private',  # Default work type
+            'Residence_type': residence_type,
+            'life_stage': life_stage,
+            'bmi_category': bmi_category,
+            'glucose_level_category': glucose_category
+        }])
+
+        # Make prediction using the loaded model
+        prediction = model.predict(user_input)[0]
+        probability = model.predict_proba(user_input)[0][1]
+
+        # Display the prediction result
+        st.subheader("🔎 Result:")
+        if prediction == 1:
+            st.error(f"⚠️ High risk of stroke. Probability: {probability * 100:.2f}%")
+        else:
+            st.success(f"✅ No significant risk. Probability: {probability * 100:.2f}%")
+
+        st.markdown("---")
+        st.markdown("**Your Data:**")
+        st.dataframe(user_input)
+
+    # === Visualizations Section ===
+    # Load test set and predictions
+    if os.path.exists(r'X_test.csv') and os.path.exists(r'y_test.csv') and os.path.exists(r'y_pred_proba.csv'):
+        X_test_vis = pd.read_csv(r'X_test.csv')
+        y_test_vis = pd.read_csv(r'y_test.csv')['y_test']
+        y_pred_proba_vis = pd.read_csv(r'y_pred_proba.csv')
+        y_pred_vis = y_pred_proba_vis['y_pred']
+        y_proba_vis = y_pred_proba_vis['y_proba']
+
+        # Feature Importance (reuse model pipeline)
+        onehot_feature_names = model.named_steps['preprocessor'].transformers_[1][1].named_steps['onehot'].get_feature_names_out([
+            'hypertension', 'heart_disease', 'is_smoker',
+            'gender', 'ever_married', 'work_type', 'Residence_type',
+            'life_stage', 'bmi_category', 'glucose_level_category'
+        ])
+        numeric_features = ['age', 'avg_glucose_level', 'bmi']
+        all_features = list(numeric_features) + list(onehot_feature_names)
+        importances = model.named_steps['classifier'].feature_importances_
+        importance_df = pd.DataFrame({'Feature': all_features, 'Importance': importances}).sort_values(by='Importance', ascending=False)
+        fig1 = px.bar(
+            importance_df.head(10),
+            x='Importance',
+            y='Feature',
+            orientation='h',
+            title='Top 10 Important Features for Stroke Prediction'
+        )
+        fig1.update_layout(yaxis={'categoryorder':'total ascending'})
+        st.subheader('Feature Importance')
+        st.plotly_chart(fig1)
+
+        # Confusion Matrix
+        cm = confusion_matrix(y_test_vis, y_pred_vis)
+        labels = ['No Stroke', 'Stroke']
+        fig2 = ff.create_annotated_heatmap(
+            z=cm,
+            x=labels,
+            y=labels,
+            colorscale='Blues',
+            showscale=True,
+            annotation_text=[[str(cell) for cell in row] for row in cm]
+        )
+        fig2.update_layout(title='Confusion Matrix')
+        st.subheader('Confusion Matrix')
+        st.plotly_chart(fig2)
+
+        # ROC Curve
+        fpr, tpr, thresholds = roc_curve(y_test_vis, y_proba_vis)
+        roc_auc = auc(fpr, tpr)
+        fig3 = go.Figure()
+        fig3.add_trace(go.Scatter(x=fpr, y=tpr, mode='lines', name=f'ROC Curve (AUC = {roc_auc:.2f})'))
+        fig3.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode='lines', name='Random', line=dict(dash='dash')))
+        fig3.update_layout(
+            title='Receiver Operating Characteristic (ROC) Curve',
+            xaxis_title='False Positive Rate',
+            yaxis_title='True Positive Rate',
+            showlegend=True
+        )
+        st.subheader('ROC Curve')
+        st.plotly_chart(fig3)
+
 
 
 elif page == "Dashboard":
