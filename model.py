@@ -14,7 +14,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.metrics import classification_report
 
 # ========== Load dataset ==========
-df = pd.read_csv(r'C:\Users\User\OneDrive\Desktop\EDA_project\healthcare-dataset-stroke-data.csv')
+df = pd.read_csv(r'healthcare-dataset-stroke-data.csv')
 
 # ========== Feature Engineering ==========
 # Create a binary feature for smoking status
