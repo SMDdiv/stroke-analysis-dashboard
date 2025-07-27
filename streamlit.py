@@ -66,7 +66,7 @@ st.sidebar.title(" Navigation")
 page = st.sidebar.radio("Go to", ["Description", "Model", "Dashboard"])
 
 @st.cache_data
-def load_data(path: str = r"C:\Users\User\OneDrive\Desktop\EDA_project\healthcare-dataset-stroke-data.csv") -> pd.DataFrame | None:
+def load_data(path: str = r"healthcare-dataset-stroke-data.csv") -> pd.DataFrame | None:
     try:
         return pd.read_csv(path)
     except FileNotFoundError:
@@ -126,7 +126,7 @@ if page == "Description":
     The dataset contains demographic and health information of individuals and whether they experienced a stroke.
     """)
 
-    df = load_data(r"C:\Users\User\OneDrive\Desktop\EDA_project\healthcare-dataset-stroke-data.csv")
+    df = load_data(r"healthcare-dataset-stroke-data.csv")
     if df is not None:
         df = preprocess_data(df)
 
