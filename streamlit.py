@@ -105,54 +105,79 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 if page == "Description":
-    st.title("\U0001F4C4 Project Description: Stroke Risk Analysis")
+   
+    # Streamlit Application
+    st.title(":bar_chart: Stroke Risk Analytics Dashboard Overview")
 
     st.markdown("""
-    ### \U0001F9E0 What are we solving?
+    ### :brain: What are we solving?
     Stroke is a leading cause of disability and death worldwide. Many strokes are preventable if early risk factors are identified.
+    Our Stroke Risk Analytics Dashboard offers a comprehensive platform designed to provide actionable insights into stroke risk factors using advanced data analytics and predictive modeling.
 
-    ### \U0001F3AF Our Target Audience
-    - Healthcare providers
-    - Policy makers
-    - Data scientists in health tech
+    ### :dart: Our Target Audience
+    - **Healthcare Providers:** Gain insights into patient risk factors for targeted interventions.
+    - **Policy Makers**
+    - **Researchers:** Access a robust data analysis tool to support studies on stroke-related trends.
+    - **Individuals:** Understand personal health risks and take proactive measures.
+    - **Data Scientists in Health Tech**
 
-    ### ✅ What makes this dashboard effective?
-    - Clean, real-time filtering
-    - Easy-to-understand metrics
-    - Predictive insights into stroke risks
-    - Visual breakdown by age, gender, glucose, BMI
+    ### :white_check_mark: Why Our Dashboard is Great
+    Our dashboard empowers users by offering deep insights into the factors influencing stroke risk. It helps users make informed decisions by:
+    - **Clean, Real-time Filtering:** Easy navigation and access to the desired data.
+    - **Personalized Risk Assessment:** Providing tailored risk predictions using the implemented AI model.
+    - **Interactive Visualization:** Enabling users to explore data through dynamic graphs and charts, revealing hidden patterns.
+    - **Data-Driven Decisions:** Facilitating improved health management strategies and research pathways through detailed exploratory data analysis (EDA).
 
-    ### \U0001F4CA Dataset Overview
+    ### :chart_with_upwards_trend: Dataset Overview
     The dataset contains demographic and health information of individuals and whether they experienced a stroke.
     """)
 
-    df = load_data(r"healthcare-dataset-stroke-data.csv")
+    df = load_data(r"C:\Users\Assiel\Desktop\stroke-analysis-dashboard\stroke-analysis-dashboard\healthcare-dataset-stroke-data.csv")
+
     if df is not None:
         df = preprocess_data(df)
 
-        st.markdown("### \U0001F522 Basic Statistics for All Columns")
+        st.markdown("### :1234: Basic Statistics for All Columns")
         st.dataframe(df.describe(include='all').T)
 
-        st.markdown("### \U0001F4C8 L1 & L2 Norm Analysis")
         features = ['age', 'avg_glucose_level', 'bmi']
         X = df[features].copy()
         scaler = MinMaxScaler()
         X_scaled = scaler.fit_transform(X)
-        feature_importance = np.array([0.2, 0.3, 0.5])
-        l1_norm = np.sum(np.abs(feature_importance))
-        l2_norm = np.sqrt(np.sum(feature_importance ** 2))
+        feature_importance = np.array([0.2, 0.3, 0.5])  # Example feature importance vector
+        
+        st.markdown("### :bar_chart: Age Distribution Analysis: Stroke vs No Stroke")
 
-        st.write("L1 Norm (Sum of absolute values):", l1_norm)
-        st.write("L2 Norm (Square root of sum of squares):", l2_norm)
 
-        st.markdown("""
-        - **L1 Norm** reflects the overall contribution of features. It helps in feature selection by promoting sparsity (used in Lasso Regression).
-        - **L2 Norm** emphasizes the magnitude of large values and is used for feature smoothing and stability (used in Ridge Regression).
-        """)
 
-        importance_df = pd.DataFrame({'Feature': features, 'Importance': feature_importance})
-        fig = px.bar(importance_df, x='Feature', y='Importance', title='Feature Importances (L1 & L2 Norms Approximation)')
-        st.plotly_chart(fig)
+        def plot_age_distribution(df):
+            stroke_data = df[df['stroke'] == 1]
+            no_stroke_data = df[df['stroke'] == 0]
+
+            stroke_mean = stroke_data['age'].mean()
+            stroke_std = stroke_data['age'].std()
+
+            no_stroke_mean = no_stroke_data['age'].mean()
+            no_stroke_std = no_stroke_data['age'].std()
+
+            x = np.linspace(df['age'].min(), df['age'].max(), 100)
+
+            stroke_y = (1 / (stroke_std * np.sqrt(2 * np.pi))) * np.exp(-((x - stroke_mean) ** 2) / (2 * stroke_std ** 2))
+            no_stroke_y = (1 / (no_stroke_std * np.sqrt(2 * np.pi))) * np.exp(-((x - no_stroke_mean) ** 2) / (2 * no_stroke_std ** 2))
+
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=x, y=stroke_y, mode='lines', name='Stroke', line=dict(color='red')))
+            fig.add_trace(go.Scatter(x=x, y=no_stroke_y, mode='lines', name='No Stroke', line=dict(color='blue')))
+
+            fig.update_layout(
+                title='Age Distribution: Stroke vs No Stroke',
+                xaxis_title='Age',
+                yaxis_title='Probability Density',
+                legend_title='Group'
+            )
+            st.plotly_chart(fig)
+
+        plot_age_distribution(df)
 
 elif page == "Model":
 
@@ -162,7 +187,7 @@ elif page == "Model":
     st.title("🔍 Stroke Prediction System")
 
     # Section: User Input
-    st.header("🧑‍⚕️ Enter Patient Data")
+    st.header("Enter Patient Data")
 
     # Create two columns for input fields
     col1, col2 = st.columns(2)
